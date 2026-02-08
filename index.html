@@ -463,6 +463,7 @@
                 const husband = getHusband(child.id);
                 if (husband && !visited.has(husband.id)) {
                   unit = buildFamilyUnit(husband.id, visited);
+                  if (unit) unit.wifeOnTop = true;
                 } else {
                   // Single female
                   visited.add(child.id);
@@ -539,13 +540,18 @@
             const bx = x + totalW / 2 - BOX_W / 2;
             positions.push({ person: husband, x: bx, y, w: BOX_W, h: hH });
           } else if (unit.wives.length === 1) {
-            // One wife
+            // One wife — descendant (child) on top, spouse on bottom
             const wife = unit.wives[0].wife;
             const wH = boxHeight(wife);
             const bx = x + totalW / 2 - BOX_W / 2;
 
-            positions.push({ person: husband, x: bx, y, w: BOX_W, h: hH });
-            positions.push({ person: wife, x: bx, y: y + hH, w: BOX_W, h: wH });
+            if (unit.wifeOnTop) {
+              positions.push({ person: wife, x: bx, y, w: BOX_W, h: wH });
+              positions.push({ person: husband, x: bx, y: y + wH, w: BOX_W, h: hH });
+            } else {
+              positions.push({ person: husband, x: bx, y, w: BOX_W, h: hH });
+              positions.push({ person: wife, x: bx, y: y + hH, w: BOX_W, h: wH });
+            }
 
             const coupleBotY = y + hH + wH;
 
