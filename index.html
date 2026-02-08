@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Šabanovići — Porodično stablo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fdf6ec;
+      color: #3e2f1c;
+      min-height: 100vh;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background-color: #5c3d2e;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      height: 56px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    nav .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    nav .brand svg {
+      width: 28px;
+      height: 28px;
+      fill: #c8e6c9;
+    }
+
+    nav .nav-links {
+      display: flex;
+      gap: 4px;
+      margin-left: 32px;
+    }
+
+    nav .nav-links a {
+      color: #e0d5c8;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    nav .nav-links a:hover,
+    nav .nav-links a.active {
+      background-color: rgba(255,255,255,0.15);
+      color: #fff;
+    }
+
+    /* ── Pages ── */
+    .page {
+      display: none;
+      padding-top: 56px;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ── Tree page ── */
+    #tree-page {
+      width: 100vw;
+      height: calc(100vh - 56px);
+      overflow: hidden;
+      position: relative;
+      padding-top: 56px;
+    }
+
+    #tree-page.active {
+      display: block;
+    }
+
+    #tree-container {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      cursor: grab;
+      position: relative;
+    }
+
+    #tree-container:active {
+      cursor: grabbing;
+    }
+
+    #tree-canvas {
+      position: absolute;
+      transform-origin: 0 0;
+    }
+
+    /* ── Zoom controls ── */
+    .zoom-controls {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    .zoom-controls button {
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 50%;
+      background: #5c3d2e;
+      color: #fff;
+      font-size: 1.4rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .zoom-controls button:hover {
+      background: #7a5440;
+    }
+
+    /* ── Person boxes ── */
+    .person-box {
+      position: absolute;
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      min-width: 160px;
+      border-top: 4px solid;
+    }
+
+    .person-box.male {
+      border-top-color: #5b8cb8;
+    }
+
+    .person-box.female {
+      border-top-color: #c97b84;
+    }
+
+    .person-box .person-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #3e2f1c;
+    }
+
+    .person-box .person-surname {
+      font-size: 0.82rem;
+      color: #6b5744;
+    }
+
+    .person-box .person-maiden {
+      font-size: 0.78rem;
+      color: #a08060;
+      font-style: italic;
+    }
+
+    .person-box .person-dates {
+      font-size: 0.78rem;
+      color: #8a7560;
+      margin-top: 4px;
+    }
+
+    /* ── Connector lines ── */
+    .connector {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .connector line, .connector path {
+      stroke: #a08060;
+      stroke-width: 2;
+      fill: none;
+    }
+
+
+    /* ── Fun facts page ── */
+    #facts-page {
+      padding-top: 80px;
+      padding-bottom: 40px;
+    }
+
+    #facts-page .facts-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    #facts-page .facts-header h1 {
+      font-size: 1.8rem;
+      color: #5c3d2e;
+    }
+
+    .facts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .fact-card {
+      background: #fff;
+      border: 2px solid #d4b896;
+      border-radius: 10px;
+      padding: 24px;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #4a3728;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .fact-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      nav {
+        padding: 0 12px;
+      }
+
+      nav .brand {
+        font-size: 1.05rem;
+      }
+
+      nav .nav-links {
+        margin-left: 16px;
+        gap: 0;
+      }
+
+      nav .nav-links a {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+      }
+
+      .facts-grid {
+        grid-template-columns: 1fr;
+        padding: 0 16px;
+      }
+
+      .person-box {
+        min-width: 120px;
+        padding: 8px 10px;
+      }
+
+      .person-box .person-name {
+        font-size: 0.8rem;
+      }
+
+      .person-box .person-surname,
+      .person-box .person-maiden,
+      .person-box .person-dates {
+        font-size: 0.72rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <a class="brand" onclick="showPage('tree')">
+      <svg viewBox="0 0 24 24"><path d="M12 2C10.9 2 10 2.9 10 4c0 .7.4 1.4 1 1.7V7H7c-1.1 0-2 .9-2 2v1.3c-.6.3-1 1-1 1.7 0 1.1.9 2 2 2s2-.9 2-2c0-.7-.4-1.4-1-1.7V9h4v1.3c-.6.3-1 1-1 1.7 0 1.1.9 2 2 2s2-.9 2-2c0-.7-.4-1.4-1-1.7V9h4v1.3c-.6.3-1 1-1 1.7 0 1.1.9 2 2 2s2-.9 2-2c0-.7-.4-1.4-1-1.7V9c0-1.1-.9-2-2-2h-4V5.7c.6-.3 1-1 1-1.7 0-1.1-.9-2-2-2z"/></svg>
+      Šabanovići
+    </a>
+    <div class="nav-links">
+      <a onclick="showPage('tree')" id="nav-tree" class="active">Stablo</a>
+      <a onclick="showPage('facts')" id="nav-facts">Zanimljivosti</a>
+    </div>
+  </nav>
+
+  <!-- Tree Page -->
+  <div id="tree-page" class="page active">
+    <div id="tree-container">
+      <div id="tree-canvas"></div>
+    </div>
+    <div class="zoom-controls">
+      <button onclick="zoomIn()" title="Zoom in">+</button>
+      <button onclick="zoomOut()" title="Zoom out">&minus;</button>
+      <button onclick="resetView()" title="Reset view" style="font-size:1rem;">&#8962;</button>
+    </div>
+  </div>
+
+  <!-- Facts Page -->
+  <div id="facts-page" class="page">
+    <div class="facts-header">
+      <h1>Zanimljivosti</h1>
+    </div>
+    <div class="facts-grid" id="facts-grid"></div>
+  </div>
+
+  <script>
+    /* ══════════════════════════════════════
+       Navigation
+       ══════════════════════════════════════ */
+    function showPage(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+
+      if (page === 'tree') {
+        document.getElementById('tree-page').classList.add('active');
+        document.getElementById('nav-tree').classList.add('active');
+      } else {
+        document.getElementById('facts-page').classList.add('active');
+        document.getElementById('nav-facts').classList.add('active');
+      }
+    }
+
+    /* ══════════════════════════════════════
+       Data Loading
+       ══════════════════════════════════════ */
+    let familyData = [];
+    let funFacts = [];
+
+    async function loadData() {
+      const [familyRes, factsRes] = await Promise.all([
+        fetch('data/family.json'),
+        fetch('data/funfacts.json')
+      ]);
+      familyData = await familyRes.json();
+      funFacts = await factsRes.json();
+      renderFacts();
+      buildTree();
+    }
+
+    /* ══════════════════════════════════════
+       Fun Facts
+       ══════════════════════════════════════ */
+    function renderFacts() {
+      const grid = document.getElementById('facts-grid');
+      grid.innerHTML = funFacts.map(fact =>
+        `<div class="fact-card">${fact}</div>`
+      ).join('');
+    }
+
+    /* ══════════════════════════════════════
+       Tree Building
+       ══════════════════════════════════════ */
+    const BOX_W = 170;
+    const BOX_H_BASE = 76;
+    const BOX_PAIR_GAP = 0;
+    const H_GAP = 40;
+    const V_GAP = 50;
+
+    function getPersonById(id) {
+      return familyData.find(p => p.id === id);
+    }
+
+    function boxHeight(person) {
+      let lines = 3;
+      if (person.gender === 'F' && person.maidenName) lines = 4;
+      return 20 + lines * 18;
+    }
+
+    function coupleHeight(husband, wives) {
+      let h = boxHeight(husband);
+      wives.forEach(w => { h += boxHeight(w); });
+      return h;
+    }
+
+    function buildTree() {
+      const canvas = document.getElementById('tree-canvas');
+      canvas.innerHTML = '';
+
+      const peopleById = {};
+      familyData.forEach(p => { peopleById[p.id] = p; });
+
+      // Find root: person with no parent and oldest birthDate
+      const roots = familyData.filter(p => !p.parent);
+      // Find the family patriarch: male root who is partner of a female root
+      let rootPerson = null;
+      for (const p of roots) {
+        if (p.gender === 'M' && !p.parent) {
+          // Check if this person has children (through partner)
+          const partner = p.partner ? peopleById[p.partner] : null;
+          const hasChildren = familyData.some(c => c.parent === p.id || (partner && c.parent === partner.id));
+          if (hasChildren) {
+            rootPerson = p;
+            break;
+          }
+        }
+      }
+      if (!rootPerson) rootPerson = familyData[0];
+
+      // Build family units: a "unit" is a husband with his wife/wives and their children
+      // Structure the tree as generations
+      // Start from root couple, find children, build recursively
+
+      function getWives(husbandId) {
+        return familyData.filter(p => p.partner === husbandId && p.gender === 'F');
+      }
+
+      function getHusband(wifeId) {
+        const wife = peopleById[wifeId];
+        if (wife && wife.partner) {
+          const partner = peopleById[wife.partner];
+          if (partner && partner.gender === 'M') return partner;
+        }
+        // Also check if any male has this wife as partner
+        return familyData.find(p => p.gender === 'M' && p.partner === wifeId) || null;
+      }
+
+      function getChildrenOfMother(motherId) {
+        return familyData.filter(p => p.parent === motherId).sort((a, b) => (a.birthDate || 0) - (b.birthDate || 0));
+      }
+
+      // A family unit node
+      // { husband, wives: [{wife, children: [familyUnitNode...]}] }
+      function buildFamilyUnit(personId, visited) {
+        if (visited.has(personId)) return null;
+        visited.add(personId);
+
+        const person = peopleById[personId];
+        if (!person) return null;
+
+        if (person.gender === 'M') {
+          const wives = getWives(person.id);
+          const wifeUnits = [];
+
+          if (wives.length === 0) {
+            // Single male, no wife — check if he has children as parent
+            return { husband: person, wives: [] };
+          }
+
+          wives.forEach(wife => {
+            visited.add(wife.id);
+            const children = getChildrenOfMother(wife.id);
+            const childUnits = [];
+            children.forEach(child => {
+              let unit;
+              if (child.gender === 'M') {
+                unit = buildFamilyUnit(child.id, visited);
+              } else {
+                // Female child: check if she has a husband
+                const husband = getHusband(child.id);
+                if (husband && !visited.has(husband.id)) {
+                  unit = buildFamilyUnit(husband.id, visited);
+                } else {
+                  // Single female
+                  visited.add(child.id);
+                  unit = { husband: null, wives: [{ wife: child, children: [] }] };
+                }
+              }
+              if (unit) childUnits.push(unit);
+            });
+            wifeUnits.push({ wife, children: childUnits });
+          });
+
+          return { husband: person, wives: wifeUnits };
+        } else {
+          // Female without a partner shown as single
+          visited.add(person.id);
+          return { husband: null, wives: [{ wife: person, children: [] }] };
+        }
+      }
+
+      const visited = new Set();
+      const tree = buildFamilyUnit(rootPerson.id, visited);
+
+      // Layout: recursive positioning
+      const positions = []; // {person, x, y, w, h}
+      const connections = []; // {fromX, fromY, toX, toY, type}
+
+      const WIFE_COL_GAP = 30;
+
+      function wifeColumnWidth(wu) {
+        let childrenW = 0;
+        wu.children.forEach((child, i) => {
+          if (i > 0) childrenW += H_GAP;
+          childrenW += unitWidth(child);
+        });
+        return Math.max(BOX_W, childrenW);
+      }
+
+      function unitWidth(unit) {
+        if (!unit) return 0;
+
+        if (unit.husband && unit.wives.length > 1) {
+          // Multi-wife: sum of each wife column + gaps between them
+          let total = 0;
+          unit.wives.forEach((wu, i) => {
+            if (i > 0) total += WIFE_COL_GAP;
+            total += wifeColumnWidth(wu);
+          });
+          return total;
+        }
+
+        // Single wife or no wife
+        let childrenWidth = 0;
+        unit.wives.forEach(wu => {
+          wu.children.forEach((child, i) => {
+            if (i > 0) childrenWidth += H_GAP;
+            childrenWidth += unitWidth(child);
+          });
+        });
+
+        return Math.max(BOX_W, childrenWidth);
+      }
+
+      function layoutUnit(unit, x, y) {
+        if (!unit) return;
+
+        const totalW = unitWidth(unit);
+
+        if (unit.husband) {
+          const husband = unit.husband;
+          const hH = boxHeight(husband);
+
+          if (unit.wives.length === 0) {
+            // Single male
+            const bx = x + totalW / 2 - BOX_W / 2;
+            positions.push({ person: husband, x: bx, y, w: BOX_W, h: hH });
+          } else if (unit.wives.length === 1) {
+            // One wife
+            const wife = unit.wives[0].wife;
+            const wH = boxHeight(wife);
+            const bx = x + totalW / 2 - BOX_W / 2;
+
+            positions.push({ person: husband, x: bx, y, w: BOX_W, h: hH });
+            positions.push({ person: wife, x: bx, y: y + hH, w: BOX_W, h: wH });
+
+            const coupleBotY = y + hH + wH;
+
+            // Layout children
+            const children = unit.wives[0].children;
+            if (children.length > 0) {
+              let childrenTotalW = 0;
+              children.forEach((child, i) => {
+                if (i > 0) childrenTotalW += H_GAP;
+                childrenTotalW += unitWidth(child);
+              });
+
+              let cx = x + totalW / 2 - childrenTotalW / 2;
+              const childY = coupleBotY + V_GAP;
+
+              const parentMidX = bx + BOX_W / 2;
+              const junctionY = coupleBotY + V_GAP / 2;
+
+              children.forEach((child, i) => {
+                const cw = unitWidth(child);
+                layoutUnit(child, cx, childY);
+
+                // Connection from parent to child
+                const childMidX = cx + cw / 2;
+                connections.push({ x1: parentMidX, y1: coupleBotY, x2: parentMidX, y2: junctionY, type: 'line' });
+                connections.push({ x1: childMidX, y1: junctionY, x2: childMidX, y2: childY, type: 'line' });
+                connections.push({ x1: Math.min(parentMidX, childMidX), y1: junctionY, x2: Math.max(parentMidX, childMidX), y2: junctionY, type: 'line' });
+
+                cx += cw + H_GAP;
+              });
+            }
+          } else {
+            // Multiple wives — each wife gets her own column with children beneath her
+            const colWidths = unit.wives.map(wu => wifeColumnWidth(wu));
+
+            // Position husband spanning the full width
+            positions.push({ person: husband, x, y, w: totalW, h: hH });
+
+            let colX = x;
+            let maxCoupleBotY = 0;
+
+            unit.wives.forEach((wu, wi) => {
+              const wife = wu.wife;
+              const wH = boxHeight(wife);
+              const colW = colWidths[wi];
+
+              // Center wife box within her column
+              const wifeX = colX + colW / 2 - BOX_W / 2;
+              positions.push({ person: wife, x: wifeX, y: y + hH, w: BOX_W, h: wH });
+
+              const wifeBotY = y + hH + wH;
+              maxCoupleBotY = Math.max(maxCoupleBotY, wifeBotY);
+
+              // Layout this wife's children beneath her
+              if (wu.children.length > 0) {
+                let childrenTotalW = 0;
+                wu.children.forEach((child, i) => {
+                  if (i > 0) childrenTotalW += H_GAP;
+                  childrenTotalW += unitWidth(child);
+                });
+
+                const childY = wifeBotY + V_GAP;
+                let cx = colX + colW / 2 - childrenTotalW / 2;
+                const wifeMidX = wifeX + BOX_W / 2;
+                const junctionY = wifeBotY + V_GAP / 2;
+
+                wu.children.forEach((child) => {
+                  const cw = unitWidth(child);
+                  layoutUnit(child, cx, childY);
+
+                  const childMidX = cx + cw / 2;
+                  connections.push({ x1: wifeMidX, y1: wifeBotY, x2: wifeMidX, y2: junctionY, type: 'line' });
+                  connections.push({ x1: Math.min(wifeMidX, childMidX), y1: junctionY, x2: Math.max(wifeMidX, childMidX), y2: junctionY, type: 'line' });
+                  connections.push({ x1: childMidX, y1: junctionY, x2: childMidX, y2: childY, type: 'line' });
+
+                  cx += cw + H_GAP;
+                });
+
+              }
+
+              colX += colW + WIFE_COL_GAP;
+            });
+          }
+        } else {
+          // Single female (no husband)
+          const wife = unit.wives[0].wife;
+          const wH = boxHeight(wife);
+          const bx = x + totalW / 2 - BOX_W / 2;
+          positions.push({ person: wife, x: bx, y, w: BOX_W, h: wH });
+        }
+      }
+
+      layoutUnit(tree, 0, 0);
+
+      // Render SVG for connections
+      let maxX = 0, maxY = 0;
+      positions.forEach(p => {
+        maxX = Math.max(maxX, p.x + p.w);
+        maxY = Math.max(maxY, p.y + p.h);
+      });
+
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('class', 'connector');
+      svg.style.width = (maxX + 100) + 'px';
+      svg.style.height = (maxY + 100) + 'px';
+      svg.style.left = '0';
+      svg.style.top = '0';
+
+      // Deduplicate connections
+      const connSet = new Set();
+      connections.forEach(c => {
+        const key = `${c.x1},${c.y1},${c.x2},${c.y2}`;
+        if (connSet.has(key)) return;
+        connSet.add(key);
+        const line = document.createElementNS(svgNS, 'line');
+        line.setAttribute('x1', c.x1);
+        line.setAttribute('y1', c.y1);
+        line.setAttribute('x2', c.x2);
+        line.setAttribute('y2', c.y2);
+        svg.appendChild(line);
+      });
+
+      canvas.appendChild(svg);
+
+      // Render person boxes
+      positions.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'person-box ' + (p.person.gender === 'M' ? 'male' : 'female');
+        div.style.left = p.x + 'px';
+        div.style.top = p.y + 'px';
+        div.style.width = p.w + 'px';
+
+        const name = p.person.name || '/';
+        const surname = p.person.surname || '/';
+        const maiden = (p.person.gender === 'F' && p.person.maidenName) ? p.person.maidenName : null;
+        const birth = p.person.birthDate || '/';
+        const end = p.person.endDate || '/';
+
+        let html = `<div class="person-name">${name}</div>`;
+        html += `<div class="person-surname">${surname}</div>`;
+        if (maiden) {
+          html += `<div class="person-maiden">(${maiden})</div>`;
+        }
+        html += `<div class="person-dates">${birth} - ${end}</div>`;
+
+        div.innerHTML = html;
+        canvas.appendChild(div);
+      });
+
+      canvas.style.width = (maxX + 100) + 'px';
+      canvas.style.height = (maxY + 100) + 'px';
+
+      // Initial zoom to fit ~3 generations
+      resetView();
+    }
+
+    /* ══════════════════════════════════════
+       Pan & Zoom
+       ══════════════════════════════════════ */
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+
+    function applyTransform() {
+      const canvas = document.getElementById('tree-canvas');
+      canvas.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
+
+    function zoomIn() {
+      scale = Math.min(scale * 1.2, 3);
+      applyTransform();
+    }
+
+    function zoomOut() {
+      scale = Math.max(scale / 1.2, 0.15);
+      applyTransform();
+    }
+
+    function resetView() {
+      const container = document.getElementById('tree-container');
+      const canvas = document.getElementById('tree-canvas');
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      const tw = parseInt(canvas.style.width) || 800;
+
+      // Fit width to show tree
+      scale = Math.min(cw / tw, 1);
+      scale = Math.max(scale, 0.2);
+
+      panX = Math.max(0, (cw - tw * scale) / 2);
+      panY = 20;
+      applyTransform();
+    }
+
+    // Mouse drag
+    const container = document.getElementById('tree-container');
+
+    container.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      dragStartX = e.clientX - panX;
+      dragStartY = e.clientY - panY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      panX = e.clientX - dragStartX;
+      panY = e.clientY - dragStartY;
+      applyTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    // Mouse wheel zoom
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const prevScale = scale;
+      if (e.deltaY < 0) {
+        scale = Math.min(scale * 1.1, 3);
+      } else {
+        scale = Math.max(scale / 1.1, 0.15);
+      }
+
+      // Zoom toward cursor
+      panX = mouseX - (mouseX - panX) * (scale / prevScale);
+      panY = mouseY - (mouseY - panY) * (scale / prevScale);
+      applyTransform();
+    }, { passive: false });
+
+    // Touch support for mobile
+    let lastTouchDist = 0;
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    let touchCount = 0;
+
+    container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        dragStartX = e.touches[0].clientX - panX;
+        dragStartY = e.touches[0].clientY - panY;
+      } else if (e.touches.length === 2) {
+        isDragging = false;
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+        lastTouchX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        lastTouchY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      }
+    }, { passive: false });
+
+    container.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      if (e.touches.length === 1 && isDragging) {
+        panX = e.touches[0].clientX - dragStartX;
+        panY = e.touches[0].clientY - dragStartY;
+        applyTransform();
+      } else if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+        const prevScale = scale;
+        scale *= dist / lastTouchDist;
+        scale = Math.max(0.15, Math.min(3, scale));
+
+        const rect = container.getBoundingClientRect();
+        const cx = midX - rect.left;
+        const cy = midY - rect.top;
+        panX = cx - (cx - panX) * (scale / prevScale);
+        panY = cy - (cy - panY) * (scale / prevScale);
+
+        lastTouchDist = dist;
+        applyTransform();
+      }
+    }, { passive: false });
+
+    container.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+
+    /* ══════════════════════════════════════
+       Init
+       ══════════════════════════════════════ */
+    loadData();
+  </script>
+</body>
+</html>
