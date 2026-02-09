@@ -201,44 +201,75 @@
 
     /* ── Fun facts page ── */
     #facts-page {
-      padding-top: 80px;
-      padding-bottom: 40px;
+      padding-top: 56px;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
     }
 
-    #facts-page .facts-header {
+    #facts-page.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .facts-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fact-slide {
+      position: absolute;
+      max-width: 720px;
       text-align: center;
-      margin-bottom: 32px;
+      padding: 0 32px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
     }
 
-    #facts-page .facts-header h1 {
-      font-size: 1.8rem;
-      color: #5c3d2e;
+    .fact-slide.active {
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    .facts-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    .fact-card {
-      background: #fff;
-      border: 2px solid #d4b896;
-      border-radius: 10px;
-      padding: 24px;
-      font-size: 1rem;
-      line-height: 1.6;
+    .fact-slide .fact-text {
+      font-size: 1.5rem;
+      font-style: italic;
+      line-height: 1.8;
       color: #4a3728;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    .fact-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    /* ── Progress bar ── */
+    .facts-progress {
+      padding: 20px 32px 28px;
+      text-align: center;
+    }
+
+    .facts-progress .progress-label {
+      font-size: 0.85rem;
+      color: #a08060;
+      margin-bottom: 8px;
+    }
+
+    .facts-progress .progress-track {
+      width: 100%;
+      max-width: 400px;
+      height: 6px;
+      background: #e8ddd0;
+      border-radius: 3px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .facts-progress .progress-fill {
+      height: 100%;
+      background: #5c3d2e;
+      border-radius: 3px;
+      transition: width 0.4s ease;
     }
 
     /* ── Responsive ── */
@@ -261,9 +292,8 @@
         font-size: 0.85rem;
       }
 
-      .facts-grid {
-        grid-template-columns: 1fr;
-        padding: 0 16px;
+      .fact-slide .fact-text {
+        font-size: 1.15rem;
       }
 
       .person-box {
@@ -311,10 +341,8 @@
 
   <!-- Facts Page -->
   <div id="facts-page" class="page">
-    <div class="facts-header">
-      <h1>Zanimljivosti</h1>
-    </div>
-    <div class="facts-grid" id="facts-grid"></div>
+    <div class="facts-viewport" id="facts-viewport"></div>
+    <div class="facts-progress" id="facts-progress"></div>
   </div>
 
   <script>
@@ -354,11 +382,49 @@
     /* ══════════════════════════════════════
        Fun Facts
        ══════════════════════════════════════ */
+    let currentFact = 0;
+    let factsInterval = null;
+
     function renderFacts() {
-      const grid = document.getElementById('facts-grid');
-      grid.innerHTML = funFacts.map(fact =>
-        `<div class="fact-card">${fact}</div>`
+      const viewport = document.getElementById('facts-viewport');
+      const progress = document.getElementById('facts-progress');
+
+      viewport.innerHTML = funFacts.map((fact, i) =>
+        `<div class="fact-slide ${i === 0 ? 'active' : ''}" data-index="${i}">
+          <div class="fact-text">${fact}</div>
+        </div>`
       ).join('');
+
+      progress.innerHTML =
+        `<div class="progress-label" id="progress-label">1 / ${funFacts.length}</div>` +
+        `<div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>`;
+
+      updateProgress();
+      startFactsRotation();
+    }
+
+    function updateProgress() {
+      const label = document.getElementById('progress-label');
+      const fill = document.getElementById('progress-fill');
+      if (!label || !fill) return;
+      label.textContent = `${currentFact + 1} / ${funFacts.length}`;
+      fill.style.width = `${((currentFact + 1) / funFacts.length) * 100}%`;
+    }
+
+    function goToFact(index) {
+      const slides = document.querySelectorAll('.fact-slide');
+      slides[currentFact].classList.remove('active');
+      currentFact = index;
+      slides[currentFact].classList.add('active');
+      updateProgress();
+    }
+
+    function startFactsRotation() {
+      if (factsInterval) clearInterval(factsInterval);
+      factsInterval = setInterval(() => {
+        const next = (currentFact + 1) % funFacts.length;
+        goToFact(next);
+      }, 5000);
     }
 
     /* ══════════════════════════════════════
