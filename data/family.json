@@ -1,205 +1,790 @@
 [
   {
     "id": 1,
-    "name": "Hasan",
+    "name": "Novak",
     "surname": "Šabanović",
     "gender": "M",
-    "birthDate": 1920,
-    "endDate": 1995,
+    "birthDate": "1???",
+    "endDate": "1???",
     "parent": null,
     "partner": 2
   },
   {
     "id": 2,
-    "name": "Fatima",
+    "name": "????",
     "surname": "Šabanović",
-    "maidenName": "Hodžić",
+    "maidenName": "????",
     "gender": "F",
-    "birthDate": 1925,
-    "endDate": 2000,
+    "birthDate": "1???",
+    "endDate": "1???",
     "parent": null,
     "partner": 1
   },
   {
     "id": 3,
-    "name": "Mehmed",
+    "name": "Toma",
     "surname": "Šabanović",
     "gender": "M",
-    "birthDate": 1945,
-    "endDate": 2020,
+    "birthDate": "1???",
+    "endDate": "1???",
     "parent": 2,
     "partner": 4
   },
   {
     "id": 4,
-    "name": "Amira",
+    "name": "Aneta",
     "surname": "Šabanović",
-    "maidenName": "Delić",
+    "maidenName": "????",
     "gender": "F",
-    "birthDate": 1948,
+    "birthDate": "1???",
+    "endDate": "1???",
     "parent": null,
     "partner": 3
   },
   {
     "id": 5,
-    "name": "Ibrahim",
+    "name": "Jovan",
     "surname": "Šabanović",
     "gender": "M",
-    "birthDate": 1950,
+    "birthDate": "1???",
+    "endDate": "1???",
     "parent": 2,
     "partner": 6
   },
   {
     "id": 6,
-    "name": "Lejla",
+    "name": "????",
     "surname": "Šabanović",
-    "maidenName": "Mujić",
+    "maidenName": "????",
     "gender": "F",
-    "birthDate": 1953,
-    "endDate": 1985,
+    "birthDate": "????",
+    "endDate": "????",
     "parent": null,
     "partner": 5
   },
   {
     "id": 7,
-    "name": "Selma",
+    "name": "Đoko",
     "surname": "Šabanović",
-    "maidenName": "Karić",
-    "gender": "F",
-    "birthDate": 1960,
-    "parent": null,
-    "partner": 5
-  },
-  {
-    "id": 8,
-    "name": "Aida",
-    "surname": "Kovačević",
-    "maidenName": "Šabanović",
-    "gender": "F",
-    "birthDate": 1947,
-    "parent": 2,
-    "partner": 9
-  },
-  {
-    "id": 9,
-    "name": "Emir",
-    "surname": "Kovačević",
     "gender": "M",
-    "birthDate": 1944,
-    "parent": null,
+    "birthDate": "1910",
+    "endDate": "1962",
+    "parent": 4,
     "partner": 8
   },
   {
+    "id": 8,
+    "name": "Jagoda",
+    "surname": "Šabanović",
+    "maidenName": "Zoraja",
+    "gender": "F",
+    "birthDate": "1918",
+    "endDate": "1941",
+    "parent": null,
+    "partner": 7
+  },
+  {
+    "id": 9,
+    "name": "Miluša",
+    "surname": "Šabanović",
+    "maidenName": "Marković",
+    "gender": "F",
+    "birthDate": "1922",
+    "endDate": "2002",
+    "parent": null,
+    "partner": 7
+  },
+  {
     "id": 10,
-    "name": "Adnan",
+    "name": "Vojin",
     "surname": "Šabanović",
     "gender": "M",
-    "birthDate": 1970,
+    "birthDate": "????",
+    "endDate": "????",
     "parent": 4,
     "partner": 11
   },
   {
     "id": 11,
-    "name": "Naida",
+    "name": "Ljubica",
     "surname": "Šabanović",
-    "maidenName": "Begović",
+    "maidenName": "Bukilić",
     "gender": "F",
-    "birthDate": 1973,
+    "birthDate": "1922",
+    "endDate": "????",
     "parent": null,
     "partner": 10
   },
   {
     "id": 12,
-    "name": "Jasmin",
+    "name": "Nikola",
     "surname": "Šabanović",
     "gender": "M",
-    "birthDate": 1975,
-    "parent": 4
-  },
-  {
-    "id": 13,
-    "name": "Dino",
-    "surname": "Šabanović",
-    "gender": "M",
-    "birthDate": 1976,
-    "parent": 6,
-    "partner": 14
-  },
-  {
-    "id": 14,
-    "name": "Alma",
-    "surname": "Šabanović",
-    "maidenName": "Hadžić",
-    "gender": "F",
-    "birthDate": 1978,
-    "parent": null,
+    "birthDate": "1936",
+    "endData": "????",
+    "parent": 8,
     "partner": 13
   },
   {
-    "id": 15,
-    "name": "Mirza",
+    "id": 13,
+    "name": "Ljubinka",
     "surname": "Šabanović",
+    "gender": "F",
+    "birthDate": "1936",
+    "endDate": "2004",
+    "parent": null,
+    "partner": 12
+  },
+  {
+    "id": 14,
+    "name": "Milka",
+    "surname": "Ilić",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "1939",
+    "parent": 8,
+    "partner": 15
+  },
+  {
+    "id": 15,
+    "name": "Nikola",
+    "surname": "Ilić",
     "gender": "M",
-    "birthDate": 1982,
-    "parent": 7
+    "birthDate": "1936",
+    "endDate": "2012",
+    "parent": null,
+    "partner": 14
   },
   {
     "id": 16,
-    "name": "Kenan",
-    "surname": "Kovačević",
-    "gender": "M",
-    "birthDate": 1970,
-    "parent": 8,
+    "name": "Velika",
+    "surname": "Reljić",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "1943",
+    "parent": 9,
     "partner": 17
   },
   {
     "id": 17,
-    "name": "Emina",
-    "surname": "Kovačević",
-    "maidenName": "Salihović",
-    "gender": "F",
-    "birthDate": 1972,
+    "name": "Momčilo",
+    "surname": "Reljić",
+    "gender": "M",
+    "birthDate": "1938",
+    "endDate": "2004",
     "parent": null,
     "partner": 16
   },
   {
     "id": 18,
-    "name": "Tarik",
+    "name": "Milivoje",
     "surname": "Šabanović",
     "gender": "M",
-    "birthDate": 1995,
-    "parent": 11
+    "birthDate": "1945",
+    "endDate": "2001",
+    "parent": 9,
+    "partner": 19
   },
   {
     "id": 19,
-    "name": "Lamija",
+    "name": "Natalija",
     "surname": "Šabanović",
+    "maidenName": "????",
     "gender": "F",
-    "birthDate": 1998,
-    "parent": 11
+    "birthDate": "193?",
+    "parent": null,
+    "partner": 18
   },
   {
     "id": 20,
-    "name": "Haris",
-    "surname": "Šabanović",
-    "gender": "M",
-    "birthDate": 2000,
-    "parent": 14
+    "name": "Jela",
+    "surname": "Musović",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "1947",
+    "parent": 9,
+    "partner": 21
   },
   {
     "id": 21,
-    "name": "Sara",
-    "surname": "Kovačević",
-    "gender": "F",
-    "birthDate": 1996,
-    "parent": 17
+    "name": "Mića",
+    "surname": "Musović",
+    "gender": "M",
+    "birthDate": "1936",
+    "endDate": "????",
+    "parent": null,
+    "partner": 20
   },
   {
     "id": 22,
-    "name": "Amer",
-    "surname": "Kovačević",
+    "name": "Zora",
+    "surname": "Šabanović",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "1950",
+    "endDate": "????",
+    "parent": 9
+  },
+  {
+    "id": 23,
+    "name": "Veljko",
+    "surname": "Šabanović",
     "gender": "M",
-    "birthDate": 1999,
-    "parent": 17
+    "birthDate": "1953",
+    "parent": 9,
+    "partner": 24
+  },
+  {
+    "id": 24,
+    "name": "Radojka",
+    "surname": "Šabanović",
+    "maidenName": "Ognjanović",
+    "gender": "F",
+    "birthDate": "1963",
+    "partner": 23
+  },
+  {
+    "id": 25,
+    "name": "Branko",
+    "surname": "Šabanović",
+    "gender": "M",
+    "birthDate": "1956",
+    "parent": 9,
+    "partner": 26
+  },
+  {
+    "id": 26,
+    "name": "Divna",
+    "surname": "Šabanović",
+    "maidenName": "Atanasijević",
+    "gender": "F",
+    "birthDate": "1953",
+    "partner": 25
+  },
+  {
+    "id": 27,
+    "name": "Rada",
+    "surname": "Todorović",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "1945",
+    "parent": 11,
+    "partner": 28
+  },
+  {
+    "id": 28,
+    "name": "????",
+    "surname": "Todorović",
+    "gender": "M",
+    "birthDate": "1963",
+    "partner": 27
+  },
+  {
+    "id": 29,
+    "name": "Dragoljub",
+    "surname": "Nenadović",
+    "maidenName": "Šabanović",
+    "gender": "M",
+    "birthDate": "19??",
+    "parent": 11,
+    "partner": 30
+  },
+  {
+    "id": 30,
+    "name": "????",
+    "surname": "Todorović",
+    "gender": "F",
+    "birthDate": "19??",
+    "partner": 29
+  },
+  {
+    "id": 31,
+    "name": "Olivera",
+    "surname": "????",
+    "gender": "F",
+    "birthDate": "19??",
+    "partner": 29
+  },
+  {
+    "id": 32,
+    "name": "Nada",
+    "surname": "Račić",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "1963",
+    "parent": 13,
+    "partner": 33
+  },
+  {
+    "id": 33,
+    "name": "Predrag",
+    "surname": "Račić",
+    "gender": "M",
+    "birthDate": "1963",
+    "partner": 32
+  },
+  {
+    "id": 34,
+    "name": "Nenad",
+    "surname": "Šabanović",
+    "gender": "M",
+    "birthDate": "1967",
+    "parent": 13,
+    "partner": 35
+  },
+  {
+    "id": 35,
+    "name": "Vesna",
+    "surname": "Šabanović",
+    "maidenName": "Pilipović",
+    "gender": "F",
+    "birthDate": "1968",
+    "partner": 34
+  },
+  {
+    "id": 36,
+    "name": "Srđan",
+    "surname": "Ilić",
+    "gender": "M",
+    "birthDate": "1962",
+    "endDate": "2014",
+    "parent": 14
+  },
+  {
+    "id": 37,
+    "name": "Slađana",
+    "surname": "Novaković",
+    "maidenName": "Ilić",
+    "gender": "F",
+    "birthDate": "1965",
+    "parent": 14,
+    "partner": 38
+  },
+  {
+    "id": 38,
+    "name": "Nebojša",
+    "surname": "Novaković",
+    "gender": "M",
+    "birthDate": "1967",
+    "endDate": "2019",
+    "partner": 37
+  },
+  {
+    "id": 39,
+    "name": "Snežana",
+    "surname": "Vučenvoić",
+    "maidenName": "Reljić",
+    "gender": "F",
+    "birthDate": "1965",
+    "parent": 16,
+    "partner": 40
+  },
+  {
+    "id": 40,
+    "name": "Dragoljub",
+    "surname": "Vučenović",
+    "gender": "M",
+    "birthDate": "1963",
+    "partner": 39
+  },
+  {
+    "id": 41,
+    "name": "Sanja",
+    "surname": "Nikolić",
+    "maidenName": "Reljić",
+    "gender": "F",
+    "birthDate": "1966",
+    "parent": 16,
+    "partner": 42
+  },
+  {
+    "id": 42,
+    "name": "Momčilo",
+    "surname": "Nikolić",
+    "gender": "M",
+    "birthDate": "196?",
+    "partner": 41
+  },
+  {
+    "id": 43,
+    "name": "Radoslav",
+    "surname": "Reljić",
+    "gender": "M",
+    "birthDate": "1973",
+    "parent": 16,
+    "partner": 44
+  },
+  {
+    "id": 44,
+    "name": "Anka",
+    "surname": "Reljić",
+    "maidenName": "????",
+    "gender": "F",
+    "birthDate": "19??",
+    "partner": 43
+  },
+  {
+    "id": 45,
+    "name": "Tanja",
+    "surname": "Đokić",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "196?",
+    "parent": 19,
+    "partner": 46
+  },
+  {
+    "id": 46,
+    "name": "Mlađan",
+    "surname": "Đokić",
+    "gender": "M",
+    "birthDate": "196?",
+    "partner": 45
+  },
+  {
+    "id": 47,
+    "name": "Olja",
+    "surname": "????",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "196?",
+    "parent": 19,
+    "partner": 48
+  },
+  {
+    "id": 48,
+    "name": "Slađan",
+    "surname": "????",
+    "gender": "M",
+    "birthDate": "196?",
+    "partner": 47
+  },
+  {
+    "id": 49,
+    "name": "Miljan",
+    "surname": "Šabanović",
+    "gender": "M",
+    "birthDate": "1981",
+    "parent": 24,
+    "partner": 50
+  },
+  {
+    "id": 50,
+    "name": "Snežana",
+    "surname": "Šabanović",
+    "maidenName": "????",
+    "gender": "F",
+    "birthDate": "19??",
+    "partner": 49
+  },
+  {
+    "id": 51,
+    "name": "Maja",
+    "surname": "Stojanović",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "1983",
+    "parent": 24,
+    "partner": 52
+  },
+  {
+    "id": 52,
+    "name": "Ivica",
+    "surname": "Ignjatović",
+    "gender": "M",
+    "birthDate": "19??",
+    "partner": 51
+  },
+  {
+    "id": 53,
+    "name": "Dragan",
+    "surname": "Stojanović",
+    "gender": "M",
+    "birthDate": "19??",
+    "partner": 51
+  },
+  {
+    "id": 54,
+    "name": "Dragana",
+    "surname": "????",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "1980",
+    "parent": 26,
+    "partner": 55
+  },
+  {
+    "id": 55,
+    "name": "Slavko",
+    "surname": "????",
+    "gender": "M",
+    "birthDate": "19??",
+    "partner": 54
+  },
+  {
+    "id": 56,
+    "name": "Đorđe",
+    "surname": "Šabanović",
+    "gender": "M",
+    "birthDate": "1981",
+    "parent": 26,
+    "partner": 57
+  },
+  {
+    "id": 57,
+    "name": "Ljiljana",
+    "surname": "Šabanović",
+    "maidenName": "????",
+    "gender": "F",
+    "birthDate": "19??",
+    "partner": 56
+  },
+  {
+    "id": 58,
+    "name": "Radina",
+    "surname": "????",
+    "gender": "F",
+    "birthDate": "19??",
+    "parent": 27
+  },
+  {
+    "id": 59,
+    "name": "Marko",
+    "surname": "????",
+    "gender": "M",
+    "birthDate": "19??",
+    "parent": 27
+  },
+  {
+    "id": 60,
+    "name": "????",
+    "surname": "Šabanović",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "200?",
+    "parent": 30
+  },
+  {
+    "id": 61,
+    "name": "Jelena",
+    "surname": "????",
+    "gender": "F",
+    "birthDate": "200?",
+    "parent": 31
+  },
+  {
+    "id": 62,
+    "name": "Vojin",
+    "surname": "????",
+    "gender": "M",
+    "birthDate": "2006",
+    "parent": 31
+  },
+  {
+    "id": 63,
+    "name": "Aleksandra",
+    "surname": "Tomašević",
+    "maidenName": "Račić",
+    "gender": "F",
+    "birthDate": "1992",
+    "parent": 32
+  },
+  {
+    "id": 64,
+    "name": "Marija",
+    "surname": "Račić",
+    "maidenName": "Račić",
+    "gender": "F",
+    "birthDate": "1996",
+    "parent": 32
+  },
+  {
+    "id": 65,
+    "name": "Ana",
+    "surname": "Šabanović",
+    "maidenName": "Šabanović",
+    "gender": "F",
+    "birthDate": "1995",
+    "parent": 35
+  },
+  {
+    "id": 66,
+    "name": "Marko",
+    "surname": "Šabanović",
+    "gender": "M",
+    "birthDate": "1997",
+    "parent": 35
+  },
+  {
+    "id": 67,
+    "name": "Nikola",
+    "surname": "Novaković",
+    "gender": "M",
+    "birthDate": "1996",
+    "parent": 37
+  },
+  {
+    "id": 68,
+    "name": "Nemanja",
+    "surname": "Novaković",
+    "gender": "M",
+    "birthDate": "2002",
+    "parent": 37
+  },
+  {
+    "id": 69,
+    "name": "Igor",
+    "surname": "Vučenović",
+    "gender": "M",
+    "birthDate": "1996",
+    "parent": 39
+  },
+  {
+    "id": 70,
+    "name": "Vanja",
+    "surname": "Vučenović",
+    "maidenName": "Vučenović",
+    "gender": "F",
+    "birthDate": "1996",
+    "parent": 39
+  },
+  {
+    "id": 71,
+    "name": "Aleksa",
+    "surname": "Nikolić",
+    "gender": "M",
+    "birthDate": "1990",
+    "parent": 41
+  },
+  {
+    "id": 72,
+    "name": "Milena",
+    "surname": "Nikolić",
+    "maidenName": "Nikolić",
+    "gender": "F",
+    "birthDate": "1993",
+    "parent": 41
+  },
+  {
+    "id": 73,
+    "name": "Jana",
+    "surname": "Reljić",
+    "maidenName": "Reljić",
+    "gender": "F",
+    "birthDate": "2004",
+    "parent": 44
+  },
+  {
+    "id": 74,
+    "name": "Mila",
+    "surname": "Reljić",
+    "maidenName": "Reljić",
+    "gender": "F",
+    "birthDate": "2007",
+    "parent": 44
+  },
+  {
+    "id": 75,
+    "name": "Tadija",
+    "surname": "Đokić",
+    "gender": "M",
+    "birthDate": "????",
+    "parent": 45
+  },
+  {
+    "id": 76,
+    "name": "Veljko",
+    "surname": "Đokić",
+    "gender": "M",
+    "birthDate": "????",
+    "parent": 45
+  },
+  {
+    "id": 77,
+    "name": "Andrija",
+    "surname": "Đokić",
+    "gender": "M",
+    "birthDate": "????",
+    "parent": 45
+  },
+  {
+    "id": 78,
+    "name": "Mina",
+    "surname": "????",
+    "gender": "F",
+    "birthDate": "2001",
+    "parent": 47
+  },
+  {
+    "id": 79,
+    "name": "Miljana",
+    "surname": "Šabanović",
+    "gender": "F",
+    "birthDate": "????",
+    "parent": 50
+  },
+  {
+    "id": 80,
+    "name": "Stefan",
+    "surname": "Šabanović",
+    "gender": "M",
+    "birthDate": "????",
+    "parent": 50
+  },
+  {
+    "id": 81,
+    "name": "Nađa",
+    "surname": "????",
+    "gender": "F",
+    "birthDate": "????",
+    "parent": 52
+  },
+  {
+    "id": 82,
+    "name": "Veljko",
+    "surname": "Stojanović",
+    "gender": "M",
+    "birthDate": "????",
+    "parent": 53
+  },
+  {
+    "id": 83,
+    "name": "Stefan",
+    "surname": "Stojanović",
+    "gender": "M",
+    "birthDate": "????",
+    "parent": 53
+  },
+  {
+    "id": 84,
+    "name": "Milica",
+    "surname": "????",
+    "gender": "F",
+    "birthDate": "????",
+    "parent": 54
+  },
+  {
+    "id": 85,
+    "name": "Andrija",
+    "surname": "Stojanović",
+    "gender": "M",
+    "birthDate": "2005",
+    "parent": 54
+  },
+  {
+    "id": 86,
+    "name": "Jovana",
+    "surname": "????",
+    "gender": "F",
+    "birthDate": "2006",
+    "parent": 54
+  },
+  {
+    "id": 87,
+    "name": "Ana",
+    "surname": "Šabanović",
+    "gender": "F",
+    "birthDate": "2007",
+    "parent": 57
   }
 ]
