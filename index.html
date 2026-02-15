@@ -578,30 +578,38 @@
       }
       if (!rootPerson) rootPerson = familyData[0];
 
-      // Build family units: a "unit" is a husband with his wife/wives and their children
+      // Build family units: a "unit" is a person (descendant) with their partner(s) and children
       // Structure the tree as generations
-      // Start from root couple, find children, build recursively
+      // Start from root, find children, build recursively
 
-      function getWives(husbandId) {
-        return familyData.filter(p => p.partner === husbandId && p.gender === 'F');
-      }
-
-      function getHusband(wifeId) {
-        const wife = peopleById[wifeId];
-        if (wife && wife.partner) {
-          const partner = peopleById[wife.partner];
-          if (partner && partner.gender === 'M') return partner;
+      function getPartners(personId) {
+        const person = peopleById[personId];
+        const partners = [];
+        const partnerIds = new Set();
+        // People who list this person as their partner
+        familyData.forEach(p => {
+          if (p.partner === personId && !partnerIds.has(p.id)) {
+            partners.push(p);
+            partnerIds.add(p.id);
+          }
+        });
+        // Person's own partner field
+        if (person && person.partner && !partnerIds.has(person.partner)) {
+          const p = peopleById[person.partner];
+          if (p) {
+            partners.push(p);
+            partnerIds.add(p.id);
+          }
         }
-        // Also check if any male has this wife as partner
-        return familyData.find(p => p.gender === 'M' && p.partner === wifeId) || null;
+        return partners;
       }
 
-      function getChildrenOfMother(motherId) {
-        return familyData.filter(p => p.parent === motherId).sort((a, b) => (a.birthDate || 0) - (b.birthDate || 0));
+      function getChildren(parentId) {
+        return familyData.filter(p => p.parent === parentId).sort((a, b) => (a.birthDate || 0) - (b.birthDate || 0));
       }
 
       // A family unit node
-      // { husband, wives: [{wife, children: [familyUnitNode...]}] }
+      // { person, partners: [{partner, children: [familyUnitNode...]}] }
       function buildFamilyUnit(personId, visited) {
         if (visited.has(personId)) return null;
         visited.add(personId);
@@ -609,46 +617,59 @@
         const person = peopleById[personId];
         if (!person) return null;
 
-        if (person.gender === 'M') {
-          const wives = getWives(person.id);
-          const wifeUnits = [];
+        const allPartners = getPartners(personId).filter(p => !visited.has(p.id));
 
-          if (wives.length === 0) {
-            // Single male, no wife — check if he has children as parent
-            return { husband: person, wives: [] };
-          }
+        if (allPartners.length === 0) {
+          return { person, partners: [] };
+        }
 
-          wives.forEach(wife => {
-            visited.add(wife.id);
-            const children = getChildrenOfMother(wife.id);
-            const childUnits = [];
-            children.forEach(child => {
-              let unit;
-              if (child.gender === 'M') {
-                unit = buildFamilyUnit(child.id, visited);
-              } else {
-                // Female child: check if she has a husband
-                const husband = getHusband(child.id);
-                if (husband && !visited.has(husband.id)) {
-                  unit = buildFamilyUnit(husband.id, visited);
-                  if (unit) unit.wifeOnTop = true;
-                } else {
-                  // Single female
-                  visited.add(child.id);
-                  unit = { husband: null, wives: [{ wife: child, children: [] }] };
-                }
-              }
-              if (unit) childUnits.push(unit);
-            });
-            wifeUnits.push({ wife, children: childUnits });
+        const partnerUnits = [];
+
+        if (allPartners.length === 1) {
+          const partner = allPartners[0];
+          visited.add(partner.id);
+
+          // Single partner: children can point to either person or partner
+          const childMap = new Map();
+          getChildren(partner.id).forEach(c => childMap.set(c.id, c));
+          getChildren(personId).forEach(c => { if (!childMap.has(c.id)) childMap.set(c.id, c); });
+          const children = [...childMap.values()].sort((a, b) => (a.birthDate || 0) - (b.birthDate || 0));
+
+          const childUnits = [];
+          children.forEach(child => {
+            const unit = buildFamilyUnit(child.id, visited);
+            if (unit) childUnits.push(unit);
           });
 
-          return { husband: person, wives: wifeUnits };
+          partnerUnits.push({ partner, children: childUnits });
         } else {
-          // Female without a partner shown as single
-          visited.add(person.id);
-          return { husband: null, wives: [{ wife: person, children: [] }] };
+          // Multi-partner: each partner gets children pointing to their ID
+          const assignedIds = new Set();
+
+          allPartners.forEach(partner => {
+            visited.add(partner.id);
+
+            const children = getChildren(partner.id);
+            children.forEach(c => assignedIds.add(c.id));
+
+            const childUnits = [];
+            children.forEach(child => {
+              const unit = buildFamilyUnit(child.id, visited);
+              if (unit) childUnits.push(unit);
+            });
+
+            partnerUnits.push({ partner, children: childUnits });
+          });
+
+          // Assign any children pointing to person to the first partner
+          const personChildren = getChildren(personId).filter(c => !assignedIds.has(c.id));
+          personChildren.forEach(child => {
+            const unit = buildFamilyUnit(child.id, visited);
+            if (unit) partnerUnits[0].children.push(unit);
+          });
         }
+
+        return { person, partners: partnerUnits };
       }
 
       const visited = new Set();
@@ -658,11 +679,11 @@
       const positions = []; // {person, x, y, w, h}
       const connections = []; // {fromX, fromY, toX, toY, type}
 
-      const WIFE_COL_GAP = 30;
+      const PARTNER_COL_GAP = 30;
 
-      function wifeColumnWidth(wu) {
+      function partnerColumnWidth(pu) {
         let childrenW = 0;
-        wu.children.forEach((child, i) => {
+        pu.children.forEach((child, i) => {
           if (i > 0) childrenW += H_GAP;
           childrenW += unitWidth(child);
         });
@@ -672,20 +693,20 @@
       function unitWidth(unit) {
         if (!unit) return 0;
 
-        if (unit.husband && unit.wives.length > 1) {
-          // Multi-wife: sum of each wife column + gaps between them
+        if (unit.partners.length > 1) {
+          // Multi-partner: sum of each partner column + gaps
           let total = 0;
-          unit.wives.forEach((wu, i) => {
-            if (i > 0) total += WIFE_COL_GAP;
-            total += wifeColumnWidth(wu);
+          unit.partners.forEach((pu, i) => {
+            if (i > 0) total += PARTNER_COL_GAP;
+            total += partnerColumnWidth(pu);
           });
           return total;
         }
 
-        // Single wife or no wife
+        // Single partner or no partner
         let childrenWidth = 0;
-        unit.wives.forEach(wu => {
-          wu.children.forEach((child, i) => {
+        unit.partners.forEach(pu => {
+          pu.children.forEach((child, i) => {
             if (i > 0) childrenWidth += H_GAP;
             childrenWidth += unitWidth(child);
           });
@@ -698,117 +719,100 @@
         if (!unit) return;
 
         const totalW = unitWidth(unit);
+        const person = unit.person;
+        const pH = boxHeight(person);
 
-        if (unit.husband) {
-          const husband = unit.husband;
-          const hH = boxHeight(husband);
+        if (unit.partners.length === 0) {
+          // Single person (no partner)
+          const bx = x + totalW / 2 - BOX_W / 2;
+          positions.push({ person, x: bx, y, w: BOX_W, h: pH });
 
-          if (unit.wives.length === 0) {
-            // Single male
-            const bx = x + totalW / 2 - BOX_W / 2;
-            positions.push({ person: husband, x: bx, y, w: BOX_W, h: hH });
-          } else if (unit.wives.length === 1) {
-            // One wife — descendant (child) on top, spouse on bottom
-            const wife = unit.wives[0].wife;
-            const wH = boxHeight(wife);
-            const bx = x + totalW / 2 - BOX_W / 2;
+        } else if (unit.partners.length === 1) {
+          // One partner — person (descendant) on top, partner below
+          const partner = unit.partners[0].partner;
+          const partH = boxHeight(partner);
+          const bx = x + totalW / 2 - BOX_W / 2;
 
-            if (unit.wifeOnTop) {
-              positions.push({ person: wife, x: bx, y, w: BOX_W, h: wH });
-              positions.push({ person: husband, x: bx, y: y + wH, w: BOX_W, h: hH });
-            } else {
-              positions.push({ person: husband, x: bx, y, w: BOX_W, h: hH });
-              positions.push({ person: wife, x: bx, y: y + hH, w: BOX_W, h: wH });
-            }
+          positions.push({ person, x: bx, y, w: BOX_W, h: pH });
+          positions.push({ person: partner, x: bx, y: y + pH, w: BOX_W, h: partH });
 
-            const coupleBotY = y + hH + wH;
+          const coupleBotY = y + pH + partH;
 
-            // Layout children
-            const children = unit.wives[0].children;
-            if (children.length > 0) {
+          // Layout children
+          const children = unit.partners[0].children;
+          if (children.length > 0) {
+            let childrenTotalW = 0;
+            children.forEach((child, i) => {
+              if (i > 0) childrenTotalW += H_GAP;
+              childrenTotalW += unitWidth(child);
+            });
+
+            let cx = x + totalW / 2 - childrenTotalW / 2;
+            const childY = coupleBotY + V_GAP;
+            const parentMidX = bx + BOX_W / 2;
+            const junctionY = coupleBotY + V_GAP / 2;
+
+            children.forEach((child) => {
+              const cw = unitWidth(child);
+              layoutUnit(child, cx, childY);
+
+              const childMidX = cx + cw / 2;
+              connections.push({ x1: parentMidX, y1: coupleBotY, x2: parentMidX, y2: junctionY, type: 'line' });
+              connections.push({ x1: childMidX, y1: junctionY, x2: childMidX, y2: childY, type: 'line' });
+              connections.push({ x1: Math.min(parentMidX, childMidX), y1: junctionY, x2: Math.max(parentMidX, childMidX), y2: junctionY, type: 'line' });
+
+              cx += cw + H_GAP;
+            });
+          }
+
+        } else {
+          // Multiple partners — each partner gets their own column with children beneath
+          const colWidths = unit.partners.map(pu => partnerColumnWidth(pu));
+
+          // Position person spanning the full width
+          positions.push({ person, x, y, w: totalW, h: pH });
+
+          let colX = x;
+
+          unit.partners.forEach((pu, pi) => {
+            const partner = pu.partner;
+            const partH = boxHeight(partner);
+            const colW = colWidths[pi];
+
+            // Center partner box within their column
+            const partnerX = colX + colW / 2 - BOX_W / 2;
+            positions.push({ person: partner, x: partnerX, y: y + pH, w: BOX_W, h: partH });
+
+            const partnerBotY = y + pH + partH;
+
+            // Layout this partner's children beneath them
+            if (pu.children.length > 0) {
               let childrenTotalW = 0;
-              children.forEach((child, i) => {
+              pu.children.forEach((child, i) => {
                 if (i > 0) childrenTotalW += H_GAP;
                 childrenTotalW += unitWidth(child);
               });
 
-              let cx = x + totalW / 2 - childrenTotalW / 2;
-              const childY = coupleBotY + V_GAP;
+              const childY = partnerBotY + V_GAP;
+              let cx = colX + colW / 2 - childrenTotalW / 2;
+              const partnerMidX = partnerX + BOX_W / 2;
+              const junctionY = partnerBotY + V_GAP / 2;
 
-              const parentMidX = bx + BOX_W / 2;
-              const junctionY = coupleBotY + V_GAP / 2;
-
-              children.forEach((child, i) => {
+              pu.children.forEach((child) => {
                 const cw = unitWidth(child);
                 layoutUnit(child, cx, childY);
 
-                // Connection from parent to child
                 const childMidX = cx + cw / 2;
-                connections.push({ x1: parentMidX, y1: coupleBotY, x2: parentMidX, y2: junctionY, type: 'line' });
+                connections.push({ x1: partnerMidX, y1: partnerBotY, x2: partnerMidX, y2: junctionY, type: 'line' });
+                connections.push({ x1: Math.min(partnerMidX, childMidX), y1: junctionY, x2: Math.max(partnerMidX, childMidX), y2: junctionY, type: 'line' });
                 connections.push({ x1: childMidX, y1: junctionY, x2: childMidX, y2: childY, type: 'line' });
-                connections.push({ x1: Math.min(parentMidX, childMidX), y1: junctionY, x2: Math.max(parentMidX, childMidX), y2: junctionY, type: 'line' });
 
                 cx += cw + H_GAP;
               });
             }
-          } else {
-            // Multiple wives — each wife gets her own column with children beneath her
-            const colWidths = unit.wives.map(wu => wifeColumnWidth(wu));
 
-            // Position husband spanning the full width
-            positions.push({ person: husband, x, y, w: totalW, h: hH });
-
-            let colX = x;
-            let maxCoupleBotY = 0;
-
-            unit.wives.forEach((wu, wi) => {
-              const wife = wu.wife;
-              const wH = boxHeight(wife);
-              const colW = colWidths[wi];
-
-              // Center wife box within her column
-              const wifeX = colX + colW / 2 - BOX_W / 2;
-              positions.push({ person: wife, x: wifeX, y: y + hH, w: BOX_W, h: wH });
-
-              const wifeBotY = y + hH + wH;
-              maxCoupleBotY = Math.max(maxCoupleBotY, wifeBotY);
-
-              // Layout this wife's children beneath her
-              if (wu.children.length > 0) {
-                let childrenTotalW = 0;
-                wu.children.forEach((child, i) => {
-                  if (i > 0) childrenTotalW += H_GAP;
-                  childrenTotalW += unitWidth(child);
-                });
-
-                const childY = wifeBotY + V_GAP;
-                let cx = colX + colW / 2 - childrenTotalW / 2;
-                const wifeMidX = wifeX + BOX_W / 2;
-                const junctionY = wifeBotY + V_GAP / 2;
-
-                wu.children.forEach((child) => {
-                  const cw = unitWidth(child);
-                  layoutUnit(child, cx, childY);
-
-                  const childMidX = cx + cw / 2;
-                  connections.push({ x1: wifeMidX, y1: wifeBotY, x2: wifeMidX, y2: junctionY, type: 'line' });
-                  connections.push({ x1: Math.min(wifeMidX, childMidX), y1: junctionY, x2: Math.max(wifeMidX, childMidX), y2: junctionY, type: 'line' });
-                  connections.push({ x1: childMidX, y1: junctionY, x2: childMidX, y2: childY, type: 'line' });
-
-                  cx += cw + H_GAP;
-                });
-
-              }
-
-              colX += colW + WIFE_COL_GAP;
-            });
-          }
-        } else {
-          // Single female (no husband)
-          const wife = unit.wives[0].wife;
-          const wH = boxHeight(wife);
-          const bx = x + totalW / 2 - BOX_W / 2;
-          positions.push({ person: wife, x: bx, y, w: BOX_W, h: wH });
+            colX += colW + PARTNER_COL_GAP;
+          });
         }
       }
 
