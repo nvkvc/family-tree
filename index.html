@@ -370,23 +370,9 @@
         display: block;
       }
 
-      .fact-slide .fact-text {
-        font-size: 1.15rem;
-      }
-
       .person-box {
         min-width: 120px;
-        padding: 8px 10px;
-      }
-
-      .person-box .person-name {
-        font-size: 0.8rem;
-      }
-
-      .person-box .person-surname,
-      .person-box .person-maiden,
-      .person-box .person-dates {
-        font-size: 0.72rem;
+        padding: 10px 14px;
       }
     }
   </style>
@@ -545,7 +531,8 @@
     function boxHeight(person) {
       let lines = 3;
       if (person.gender === 'F' && person.maidenName) lines = 4;
-      return 20 + lines * 18;
+      const isSmall = window.innerWidth <= 600;
+      return isSmall ? (16 + lines * 15) : (20 + lines * 18);
     }
 
     function coupleHeight(husband, wives) {
