@@ -528,11 +528,36 @@
       return familyData.find(p => p.id === id);
     }
 
+    const _boxHeightCache = {};
     function boxHeight(person) {
-      let lines = 3;
-      if (person.gender === 'F' && person.maidenName) lines = 4;
-      const isSmall = window.innerWidth <= 600;
-      return isSmall ? (16 + lines * 15) : (20 + lines * 18);
+      if (_boxHeightCache[person.id] != null) return _boxHeightCache[person.id];
+
+      // Measure actual rendered height by creating a hidden box
+      const div = document.createElement('div');
+      div.className = 'person-box ' + (person.gender === 'M' ? 'male' : 'female');
+      div.style.position = 'absolute';
+      div.style.visibility = 'hidden';
+      div.style.width = BOX_W + 'px';
+
+      const name = person.name || '/';
+      const surname = person.surname || '/';
+      const maiden = (person.gender === 'F' && person.maidenName) ? person.maidenName : null;
+      const birth = person.birthDate || '/';
+      const end = person.endDate || '';
+
+      let html = `<div class="person-name">${name}</div>`;
+      html += `<div class="person-surname">${surname}</div>`;
+      if (maiden) html += `<div class="person-maiden">(${maiden})</div>`;
+      const dateStr = end ? `${birth} - ${end}` : `${birth} -`;
+      html += `<div class="person-dates">${dateStr}</div>`;
+
+      div.innerHTML = html;
+      document.body.appendChild(div);
+      const h = div.offsetHeight;
+      document.body.removeChild(div);
+
+      _boxHeightCache[person.id] = h;
+      return h;
     }
 
     function coupleHeight(husband, wives) {
@@ -544,6 +569,9 @@
     function buildTree() {
       const canvas = document.getElementById('tree-canvas');
       canvas.innerHTML = '';
+
+      // Clear height cache so boxes are re-measured at current viewport size
+      for (const key in _boxHeightCache) delete _boxHeightCache[key];
 
       const peopleById = {};
       familyData.forEach(p => { peopleById[p.id] = p; });
